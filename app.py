@@ -4,10 +4,10 @@ import plotly.express as px
 import os
 
 # ---------------------------------------------------------
-# 1. 核心設定 & CSS (無印風 + 隱藏官方標示)
+# 1. 核心設定 & CSS (強力隱藏官方標示版)
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="設備維修智能中樞 Ultimate V3",
+    page_title="設備維修智能中樞 Ultimate V4",
     page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -33,17 +33,18 @@ st.markdown("""
         font-family: "Microsoft JhengHei", "Segoe UI", sans-serif;
     }
     
-    /* === 關鍵修改：隱藏 Streamlit 官方元素 === */
-    /* 1. 隱藏右上角漢堡選單與 Deploy 按鈕 */
-    #MainMenu {visibility: hidden;}
-    header {visibility: hidden;}
+    /* === 🌟 強力隱藏區 (Nuclear Option) === */
+    /* 1. 隱藏上方 Header (漢堡選單、Deploy 按鈕、連線狀態) */
+    header {visibility: hidden !important;}
+    [data-testid="stToolbar"] {visibility: hidden !important;}
+    [data-testid="stDecoration"] {visibility: hidden !important;}
     
-    /* 2. 隱藏右下角 Made with Streamlit浮水印 */
-    footer {visibility: hidden;}
+    /* 2. 隱藏下方 Footer (Made with Streamlit) */
+    footer {visibility: hidden !important;}
     
-    /* 調整頂部留白，因為 header 隱藏了，把內容往上推一點 */
+    /* 3. 消除頂部留白 (因為 Header 藏起來了，把內容往上推) */
     .block-container {
-        padding-top: 1rem !important; 
+        padding-top: 0rem !important; 
     }
 
     /* 側邊欄按鈕 */
@@ -67,7 +68,7 @@ st.markdown("""
     /* 隱藏原生 Tabs */
     .stTabs [data-baseweb="tab-list"] { display: none; }
     
-    /* === 魔改 Radio Button 變成 按鈕標籤 (Directory Style) === */
+    /* === 魔改 Radio Button 變成 按鈕標籤 === */
     div.row-widget.stRadio > div {
         flex-direction: row;
         flex-wrap: wrap;
