@@ -7,7 +7,7 @@ import os
 # 1. 核心設定 & CSS (強力隱藏官方標示版)
 # ---------------------------------------------------------
 st.set_page_config(
-    page_title="設備維修智能中樞 Ultimate V4",
+    page_title="設備維修智慧查詢 V4",
     page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -422,3 +422,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
