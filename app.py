@@ -4,7 +4,7 @@ import plotly.express as px
 import os
 
 # ---------------------------------------------------------
-# 1. 核心設定 & CSS (按鈕化標籤風格)
+# 1. 核心設定 & CSS (無印風 + 隱藏官方標示)
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="設備維修智能中樞 Ultimate V3",
@@ -33,6 +33,19 @@ st.markdown("""
         font-family: "Microsoft JhengHei", "Segoe UI", sans-serif;
     }
     
+    /* === 關鍵修改：隱藏 Streamlit 官方元素 === */
+    /* 1. 隱藏右上角漢堡選單與 Deploy 按鈕 */
+    #MainMenu {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* 2. 隱藏右下角 Made with Streamlit浮水印 */
+    footer {visibility: hidden;}
+    
+    /* 調整頂部留白，因為 header 隱藏了，把內容往上推一點 */
+    .block-container {
+        padding-top: 1rem !important; 
+    }
+
     /* 側邊欄按鈕 */
     div[data-testid="stSidebar"] button {
         width: 100%;
@@ -333,7 +346,6 @@ def main():
         cats = ["全部顯示"] + sorted(df_model['大標'].unique().tolist())
         idx_cat = cats.index(target_cat) if target_cat in cats else 0
         
-        # 使用 Radio 並透過 CSS 偽裝成按鈕群
         sel_cat = st.radio("大標", cats, index=idx_cat, horizontal=True, key="cat_filter", label_visibility="collapsed")
         st.session_state['target_category'] = sel_cat
 
@@ -345,7 +357,6 @@ def main():
             topics = ["全部顯示"] + sorted(df_l1['主題(事件簡述)'].unique().tolist())
             idx_topic = topics.index(target_topic) if target_topic in topics else 0
             
-            # 使用 Radio 偽裝成按鈕群
             sel_topic = st.radio("主題", topics, index=idx_topic, horizontal=True, key="topic_filter", label_visibility="collapsed")
             st.session_state['target_topic'] = sel_topic
             
@@ -359,31 +370,24 @@ def main():
         if df_final.empty:
             st.info("此分類下無資料")
         else:
-            # 依據「主題」進行分組 (Groupby)
-            # 這樣相同主題的資料就會被包在同一個框框裡
             grouped = df_final.groupby('主題(事件簡述)')
             
-            # 如果是 AI 跳轉，我們要確保目標主題排在第一個
             sorted_groups = []
             target_group_key = None
             
             if target_id is not None:
-                # 找出 target_id 對應的主題
                 target_row = df_final[df_final['original_id'] == target_id]
                 if not target_row.empty:
                     target_group_key = target_row['主題(事件簡述)'].iloc[0]
 
-            # 排序邏輯：目標主題置頂，其他依名稱排序
             group_keys = sorted(grouped.groups.keys())
             if target_group_key and target_group_key in group_keys:
                 group_keys.remove(target_group_key)
                 group_keys.insert(0, target_group_key)
 
-            # 開始渲染每一個主題區塊
             for topic_name in group_keys:
                 group_data = grouped.get_group(topic_name)
                 
-                # 建立主題大框框
                 st.markdown(f"""
                 <div class="topic-container">
                     <div class="topic-header">
@@ -392,9 +396,7 @@ def main():
                     </div>
                 """, unsafe_allow_html=True)
                 
-                # 在框框內列出每一筆紀錄
                 for idx, row in group_data.iterrows():
-                    # 判斷是否為 AI 跳轉的目標 (高亮顯示)
                     is_target = (row['original_id'] == target_id)
                     row_class = "highlight-record" if is_target else ""
                     target_icon = "✅ [AI精選]" if is_target else ""
